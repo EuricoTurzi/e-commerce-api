@@ -1,0 +1,4 @@
+// Ignore node_modules and build output directories
+
+/node_modules
+/lib
