@@ -2,8 +2,8 @@ import express from 'express';
 import { initializeApp } from 'firebase-admin/app';
 import { routes } from './routes/index';
 
-
 initializeApp(); // Inicializar o Firebase Admin SDK
+
 const app = express(); 
 
 // Usar as rotas definidas

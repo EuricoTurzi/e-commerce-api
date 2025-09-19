@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+const { getFirestore } = require('firebase-admin/firestore');
 
 // Definir o tipo de dado User
 type User = {
@@ -8,14 +9,20 @@ type User = {
 }
 
 // Array para armazenar os usuários (em memória)
-let id = 0
 let users: User[] = []
 
 // Controlador para gerenciar as operações relacionadas aos usuários
 export class UsersController {
     // Método para retornar a lista de usuários
-    static getUsers(req: Request, res: Response){
-        res.send(users)
+    static async getUsers(req: Request, res: Response){
+       const snapshot = await getFirestore().collection("users").get()
+       const usersList = snapshot.docs.map((doc: { id: any; data: () => any; }) => {
+        return {
+            id: doc.id,
+            ...doc.data()
+        }
+       });
+       res.send(usersList);
     }
 
     // Método para retornar um usuário específico pelo ID
@@ -47,10 +54,10 @@ export class UsersController {
     }
 
     // Método para adicionar um novo usuário
-    static addUser(req: Request, res: Response){
+    static async addUser(req: Request, res: Response){
         let user = req.body
-        user.id = ++id;
-        users.push(user)
+        await getFirestore().collection('users').add(user)
+        
         res.send({
             message: "Usuário adicionado com sucesso",
         })
